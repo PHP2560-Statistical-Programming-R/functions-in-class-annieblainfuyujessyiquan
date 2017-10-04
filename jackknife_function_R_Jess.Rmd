@@ -29,7 +29,17 @@ Write a function called `mean.jackknife` that takes argument `a_vector` and retu
 
 ```{r, eval=FALSE}
 mean.jackknife <- function(a_vector) {
-  # Put your function in here
+  
+  mean_vector <- numeric()
+  for(i in seq_along(a_vector)) {
+    mean_vector[i] <- mean(a_vector[-i])
+  }
+  
+  variance <- var(mean_vector)
+  weight <- ((length(a_vector) - 1) ^ 2)/length(a_vector)
+  weighted_variance <- variance * weight
+  
+  jackknife.stderr <- sqrt(weighted_variance)
   return(jackknife.stderr)
 }
 ```
