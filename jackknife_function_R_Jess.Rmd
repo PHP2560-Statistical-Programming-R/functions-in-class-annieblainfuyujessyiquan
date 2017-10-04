@@ -108,28 +108,23 @@ Write a function called `jackknife.lm` that takes arguments `df`, `formula` and 
 
 ```{r, eval=FALSE}
 jackknife.lm <- function(df,formula,p) {
+  
   coeffs_matrix <- matrix(NA, p+1, nrow(df))
   for(i in 1:nrow(df)) {
-    coeffs_matrix[,i] <- lm(formula, df[-i,])
+    coeffs_matrix[,i] <- lm(formula, data = df[-i,])$coefficients
   }
   
-  
-  ###############################
-    gamma_matrix <- matrix(NA, 2, length(a_vector))
-  for(i in seq_along(a_vector)) {
-    gamma_matrix[,i] <- gamma.est(a_vector[-i])
+  variance <- numeric()
+  for(i in 1:nrow(coeffs_matrix)) {
+    variance[i] <- var(coeffs_matrix[i,])  
   }
-  
-  variance <- c(var(gamma_matrix[1,]), var(gamma_matrix[2,]))
-  weight <- ((length(a_vector) - 1) ^ 2)/length(a_vector)
+
+  weight <- ((nrow(df) - 1) ^ 2)/nrow(df)
   weighted_variance <- variance * weight
   
   jackknife.stderrs <- sqrt(weighted_variance)
-  #########################################
   
-  
-  
-  return(jackknife.stderr)
+  return(jackknife.stderrs)
 }
 ```
 
@@ -145,11 +140,8 @@ my.lm <- lm(output~input, data=data)
 coefficients(my.lm)
 # "Official" standard errors
 sqrt(diag(vcov(my.lm)))
-jackknife.lm(df=data,formula="output~input",p=2)
+jackknife.lm(df=data,formula="output~input", p=1)
 ```
-
-
-
 
 ##Refactoring the Jackknife
 
@@ -195,6 +187,7 @@ take the square roots
     ```{r, eval=FALSE}
           omit.case <- function(the_data,omitted_point) {
         # This should take the data and omit one point at a time and return the new data
+            
             }
     ```
 - Write a function `omit_and_est` that takes the data with an omitted point and returns whatever function your estimator does.  

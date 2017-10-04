@@ -142,7 +142,17 @@ want the standard error of our estimate, <span class="math inline">\(se_{\hat{\t
 <p><strong>PHP 2560 Only</strong> (Why <span class="math inline">\((n-1)^2 / n\)</span>? Think about just getting the standard error of the mean)</p>
 <p>Write a function called <code>mean.jackknife</code> that takes argument <code>a_vector</code> and returns a jackknife estimate of the standard error.</p>
 <pre class="r"><code>mean.jackknife &lt;- function(a_vector) {
-  # Put your function in here
+  
+  mean_vector &lt;- numeric()
+  for(i in seq_along(a_vector)) {
+    mean_vector[i] &lt;- mean(a_vector[-i])
+  }
+  
+  variance &lt;- var(mean_vector)
+  weight &lt;- ((length(a_vector) - 1) ^ 2)/length(a_vector)
+  weighted_variance &lt;- variance * weight
+  
+  jackknife.stderr &lt;- sqrt(weighted_variance)
   return(jackknife.stderr)
 }</code></pre>
 <div id="jackknife-for-the-mean-example-test-your-code-here" class="section level4">
@@ -168,7 +178,17 @@ all.equal(formula_se_of_mean,mean.jackknife(some_normals))</code></pre>
 <p>Write a function called <code>gamma.jackknife</code> that takes argument <code>a_vector</code> and returns jackknife standard error estimates on the gamma parameters.</p>
 <pre class="r"><code>gamma.jackknife &lt;- function(a_vector) {
   
-  return(jackknife.stderrs)
+  gamma_matrix &lt;- matrix(NA, 2, length(a_vector))
+  for(i in seq_along(a_vector)) {
+    gamma_matrix[,i] &lt;- gamma.est(a_vector[-i])
+  }
+  
+  variance &lt;- c(var(gamma_matrix[1,]), var(gamma_matrix[2,]))
+  weight &lt;- ((length(a_vector) - 1) ^ 2)/length(a_vector)
+  weighted_variance &lt;- variance * weight
+  
+  jackknife.stderrs &lt;- sqrt(weighted_variance)
+  return(c(a=jackknife.stderrs[1], s=jackknife.stderrs[2]))
 }</code></pre>
 </div>
 <div id="jackknife-for-gamma-parameters-example" class="section level3">
@@ -183,7 +203,22 @@ gamma.jackknife(input)</code></pre>
 <p>Write a function called <code>jackknife.lm</code> that takes arguments <code>df</code>, <code>formula</code> and <code>p</code> and returns jackknife standard error estimates on the coefficients of a linear regression model.</p>
 <pre class="r"><code>jackknife.lm &lt;- function(df,formula,p) {
   
-  return(jackknife.stderr)
+  coeffs_matrix &lt;- matrix(NA, p+1, nrow(df))
+  for(i in 1:nrow(df)) {
+    coeffs_matrix[,i] &lt;- lm(formula, data = df[-i,])$coefficients
+  }
+  
+  variance &lt;- numeric()
+  for(i in 1:nrow(coeffs_matrix)) {
+    variance[i] &lt;- var(coeffs_matrix[i,])  
+  }
+
+  weight &lt;- ((nrow(df) - 1) ^ 2)/nrow(df)
+  weighted_variance &lt;- variance * weight
+  
+  jackknife.stderrs &lt;- sqrt(weighted_variance)
+  
+  return(jackknife.stderrs)
 }</code></pre>
 <div id="jackknife-for-linear-regression-coefficients-example" class="section level3">
 <h3>Jackknife for linear regression coefficients Example</h3>
@@ -193,7 +228,7 @@ my.lm &lt;- lm(output~input, data=data)
 coefficients(my.lm)
 # &quot;Official&quot; standard errors
 sqrt(diag(vcov(my.lm)))
-jackknife.lm(df=data,formula=&quot;output~input&quot;,p=2)</code></pre>
+jackknife.lm(df=data,formula=&quot;output~input&quot;,p=1)</code></pre>
 </div>
 </div>
 <div id="refactoring-the-jackknife" class="section level2">
