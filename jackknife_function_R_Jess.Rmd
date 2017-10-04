@@ -44,8 +44,6 @@ mean.jackknife <- function(a_vector) {
 }
 ```
 
-
-
 #### Jackknife for the mean Example: test your code here
 
 
@@ -79,6 +77,7 @@ Write a function called `gamma.jackknife` that takes argument `a_vector` and ret
 
 ```{r, eval=FALSE }
 gamma.jackknife <- function(a_vector) {
+  
   gamma_matrix <- matrix(NA, 2, length(a_vector))
   for(i in seq_along(a_vector)) {
     gamma_matrix[,i] <- gamma.est(a_vector[-i])
@@ -93,10 +92,7 @@ gamma.jackknife <- function(a_vector) {
 }
 ```
 
-
-
 ###Jackknife for Gamma Parameters Example
-
 
 ```{r, eval=FALSE}
 input <- rgamma(1000, shape=0.1, scale=10)
@@ -112,6 +108,25 @@ Write a function called `jackknife.lm` that takes arguments `df`, `formula` and 
 
 ```{r, eval=FALSE}
 jackknife.lm <- function(df,formula,p) {
+  coeffs_matrix <- matrix(NA, p+1, nrow(df))
+  for(i in 1:nrow(df)) {
+    coeffs_matrix[,i] <- lm(formula, df[-i,])
+  }
+  
+  ###############################
+    gamma_matrix <- matrix(NA, 2, length(a_vector))
+  for(i in seq_along(a_vector)) {
+    gamma_matrix[,i] <- gamma.est(a_vector[-i])
+  }
+  
+  variance <- c(var(gamma_matrix[1,]), var(gamma_matrix[2,]))
+  weight <- ((length(a_vector) - 1) ^ 2)/length(a_vector)
+  weighted_variance <- variance * weight
+  
+  jackknife.stderrs <- sqrt(weighted_variance)
+  #########################################
+  
+  
   
   return(jackknife.stderr)
 }
