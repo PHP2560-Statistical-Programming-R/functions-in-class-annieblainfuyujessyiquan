@@ -113,6 +113,7 @@ jackknife.lm <- function(df,formula,p) {
     coeffs_matrix[,i] <- lm(formula, df[-i,])
   }
   
+  
   ###############################
     gamma_matrix <- matrix(NA, 2, length(a_vector))
   for(i in seq_along(a_vector)) {
