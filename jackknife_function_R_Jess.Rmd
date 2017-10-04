@@ -1,5 +1,5 @@
 ---
-title: "Untitled"
+title: "functions"
 author: "Jess Kaminsky"
 date: "March 7, 2017"
 output: html_document
