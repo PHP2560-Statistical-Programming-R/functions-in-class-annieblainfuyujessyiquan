@@ -118,7 +118,22 @@ Write a function called `jackknife.lm` that takes arguments `df`, `formula` and 
 ```{r, eval=FALSE}
 jackknife.lm <- function(df,formula,p) {
   
-  return(jackknife.stderr)
+  matrix_lm = matrix(NA, p+1, nrow(df))
+  for(i in 1:nrow(df)) {
+    matrix_lm[,i] = lm(formula, data = df[-i,])$coefficients
+  }
+  
+  variance <- numeric()
+  for(i in 1:nrow(matrix_lm)) {
+    variance[i] = var(matrix_lm[i,])  
+  }
+
+  weight = ((nrow(df) - 1) ^ 2)/nrow(df)
+  weighted_variance = variance * weight
+  
+  jackknife.stderrs <- sqrt(weighted_variance)
+  
+  return(jackknife.stderrs)
 }
 ```
 
@@ -134,7 +149,7 @@ my.lm <- lm(output~input, data=data)
 coefficients(my.lm)
 # "Official" standard errors
 sqrt(diag(vcov(my.lm)))
-jackknife.lm(df=data,formula="output~input",p=2)
+jackknife.lm(df=data,formula="output~input",p=3)
 ```
 
 
@@ -181,18 +196,26 @@ take the square roots
     - length for a 1d object
     - number of rows for 2d
 - Write a function `omit.case` that omits a point given the data and returns the data minus that point. Make sure it can handle higher dimensions. 
-    ```{r, eval=FALSE}
-          omit.case <- function(the_data,omitted_point) {
-        # This should take the data and omit one point at a time and return the new data
-            }
-    ```
-- Write a function `omit_and_est` that takes the data with an omitted point and returns whatever function your estimator does.  
-    ```{r,eval=FALSE}
-    
-        omit_and_est <- function(omit) {
-              # This function should take the output of omit.case and use it as input for the estimator
-        }
+```{r, eval=FALSE}
 
+omit.case <- function(the_data,omitted_point) {
+  data_dims <- dim(the_data)
+  if (is.null(data_dims) || (length(data_dims)==1)) {
+    return(the_data[-omitted_point])
+  } else {
+    return(the_data[-omitted_point,])
+}
+}
+
+```
+- Write a function `omit_and_est` that takes the data with an omitted point and returns whatever function your estimator does.  
+```{r,eval=FALSE}
+    
+omit_and_est <- function(omit) {
+  
+            
+}
+```
 
 ```{r, eval=FALSE}
 jackknife <- function(estimator,the_data) {
