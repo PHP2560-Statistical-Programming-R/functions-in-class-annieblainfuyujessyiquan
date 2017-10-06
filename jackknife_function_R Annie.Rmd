@@ -185,7 +185,7 @@ take the square roots
 ```{r}    
    select_d<-function(data){
      data_dims<-dim(data)
-     if(is.null(data_dims)||(length(data_dims)==1)){
+     if(is.null(data_dims)||length(data_dims)==1){
        n<-length(data)
      }
      else{
