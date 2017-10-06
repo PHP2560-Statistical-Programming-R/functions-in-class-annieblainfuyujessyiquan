@@ -1,7 +1,7 @@
 ---
 title: "OCT 4 INCLASS"
 author: "Annie Yang"
-date: "March 7, 2017"
+date: "Oct 4, 2017"
 output: html_document
 ---
 
@@ -31,7 +31,7 @@ The goal of this project is to work through building functions around the Jackki
 Write a function called `mean.jackknife` that takes argument `a_vector` and returns a jackknife estimate of the standard error.
 
 
-```{r, eval=FALSE}
+```{r}
 mean.jackknife <- function(a_vector) {
 n<-length(a_vector)
 a<-vector("double",n)
@@ -49,7 +49,7 @@ jackknife.stderr<-sqrt(var_a*(n-1)^2/n)
 #### Jackknife for the mean Example: test your code here
 
 
-```{r, eval = FALSE}
+```{r}
 some_normals <- rnorm(100,mean=7,sd=5)
 mean(some_normals)
 (formula_se_of_mean <- sd(some_normals)/sqrt(length(some_normals)))
@@ -63,7 +63,7 @@ all.equal(formula_se_of_mean,mean.jackknife(some_normals))
 
 The following function is a way to calculate the method of moments estimators for the gamma distribution:
 
-```{r, eval=FALSE}
+```{r}
 gamma.est <- function(the_data) {
   m <- mean(the_data)
   v <- var(the_data)
@@ -78,7 +78,7 @@ gamma.est <- function(the_data) {
 
 Write a function called `gamma.jackknife` that takes argument `a_vector` and returns jackknife standard error estimates on the gamma parameters. 
 
-```{r, eval=FALSE }
+```{r}
 gamma.jackknife <- function(a_vector) {
   n<-length(a_vector)
   gamma.para<-matrix(NA,nrow=2,ncol=length(a_vector))
@@ -96,7 +96,7 @@ gamma.jackknife <- function(a_vector) {
 ###Jackknife for Gamma Parameters Example
 
 
-```{r, eval=FALSE}
+```{r}
 input <- rgamma(1000, shape=0.1, scale=10)
 gamma.est(input)
 gamma.jackknife(input)
@@ -108,7 +108,7 @@ gamma.jackknife(input)
 
 Write a function called `jackknife.lm` that takes arguments `df`, `formula` and `p` and returns jackknife standard error estimates on the coefficients of a linear regression model. 
 
-```{r, eval=FALSE}
+```{r}
 jackknife.lm <- function(df,formula,p) {
   n<-nrow(df)
   jackknife.stderr<-vector("double",p)
@@ -129,7 +129,7 @@ for(i in 1:nrow(df)){
 ###Jackknife for linear regression coefficients Example
 
 
-```{r, eval=FALSE}
+```{r}
 output <- 1.2 + 0.6*input +  rnorm(1000, 0, 2.1)
 data <- data.frame(output,input)
 my.lm <- lm(output~input, data=data)
@@ -182,7 +182,7 @@ take the square roots
 - Make the function select the correct dimensions
     - length for a 1d object
     - number of rows for 2d
-```{r,eval=FALSE}    
+```{r}    
    select_d<-function(data){
      data_dims<-dim(data)
      if(is.null(data_dims)||(length(data_dims)==1)){
@@ -197,7 +197,7 @@ take the square roots
 ```
 
 - Write a function `omit.case` that omits a point given the data and returns the data minus that point. Make sure it can handle higher dimensions. 
-```{r, eval=FALSE}
+```{r}
         omit.case <- function(the_data,omitted_point) {
         omit<-the_data[-omitted_point]
         return(omit)
@@ -206,7 +206,7 @@ take the square roots
 
 - Write a function `omit_and_est` that takes the data with an omitted point and returns whatever function your estimator does.  
 
-```{r, eval=FALSE}
+```{r}
 jackknife <- function(estimator,the_data) {
   omit_and_est <- function(omit) {
              est<-estimator(omit.case(the_data,omit))
@@ -230,7 +230,7 @@ jackknife <- function(estimator,the_data) {
 ###It works
 
 
-```{r, eval=FALSE}
+```{r}
 jackknife(estimator=mean,the_data=some_normals)
 all.equal(jackknife(estimator=mean,the_data=some_normals),
           mean.jackknife(some_normals))
@@ -240,7 +240,7 @@ all.equal(jackknife(estimator=mean,the_data=some_normals),
 
 
 
-```{r, eval=FALSE}
+```{r}
 all.equal(jackknife(estimator=gamma.est,the_data=data$input),
           gamma.jackknife(data$input))
 ```
@@ -248,13 +248,13 @@ all.equal(jackknife(estimator=gamma.est,the_data=data$input),
 ---
 
 
-```{r, eval=FALSE}
+```{r}
 all.equal(jackknife(estimator=gamma.est,the_data=data$input),
           gamma.jackknife(data$input), check.names=FALSE)
 ```
 
 
-```{r, eval=FALSE}
+```{r}
 est.coefs <- function(the_data) {
   return(lm(output~input,data=the_data)$coefficients)
 }
@@ -265,7 +265,7 @@ all.equal(est.coefs(data), coefficients(my.lm))
 ---
 
 
-```{r, eval=FALSE}
+```{r}
 jackknife(estimator=est.coefs,the_data=data)
 all.equal(jackknife(estimator=est.coefs,the_data=data),
           jackknife.lm(df=data,formula="output~input",p=2))
@@ -281,7 +281,7 @@ The code for `jackknife()` is still a bit clunky:
 
 - write a function that calculates the `n` needed for the above code:
 
-    ```{r, eval=FALSE}
+    ```{r}
       data_size <- function(the_data) {
         if(is.null(dim(the_data))){
           n<-length(the_data)
@@ -294,7 +294,7 @@ The code for `jackknife()` is still a bit clunky:
     ```
 - Write a function that calculate the variance of all the estimates and returns the standard error
 
-```{r, eval=FALSE}
+```{r}
 scale_and_sqrt_vars <- function(jackknife.ests,n) {
   var_est<-apply(jackknife.ests,1,var)
   scale_var<-((n-1)^2/n)*var_est
@@ -307,7 +307,7 @@ scale_and_sqrt_vars <- function(jackknife.ests,n) {
 
 ###Now invoke those functions
 
-```{r, eval=FALSE}
+```{r}
 jackknife <- function(estimator,the_data) {
   n <- data_size(the_data)
   omit_and_est <- function(omit) {
