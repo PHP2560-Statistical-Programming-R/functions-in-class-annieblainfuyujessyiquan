@@ -10,7 +10,7 @@ output: html_document
 
 # Project Goals
 
-The goal of this project is to work through building functions around the Jackkinfe. We will start with some simple functions and then determine a pattern to build a more general function in the end. 
+The goal of this project is to work through building functions around the Jackkinfe. We will start with some simple functions and then determine a pattern to build a more general function in the end.
 
 
 ## Jackknife of the Mean!

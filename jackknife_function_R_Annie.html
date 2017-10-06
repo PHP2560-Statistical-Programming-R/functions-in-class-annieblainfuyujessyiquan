@@ -155,9 +155,9 @@ jackknife.stderr&lt;-sqrt(var_a*(n-1)^2/n)
 <h4>Jackknife for the mean Example: test your code here</h4>
 <pre class="r"><code>some_normals &lt;- rnorm(100,mean=7,sd=5)
 mean(some_normals)</code></pre>
-<pre><code>## [1] 6.520236</code></pre>
+<pre><code>## [1] 6.290558</code></pre>
 <pre class="r"><code>(formula_se_of_mean &lt;- sd(some_normals)/sqrt(length(some_normals)))</code></pre>
-<pre><code>## [1] 0.508244</code></pre>
+<pre><code>## [1] 0.4925441</code></pre>
 <pre class="r"><code>all.equal(formula_se_of_mean,mean.jackknife(some_normals))</code></pre>
 <pre><code>## [1] TRUE</code></pre>
 </div>
@@ -190,11 +190,11 @@ mean(some_normals)</code></pre>
 <h3>Jackknife for Gamma Parameters Example</h3>
 <pre class="r"><code>input &lt;- rgamma(1000, shape=0.1, scale=10)
 gamma.est(input)</code></pre>
-<pre><code>##        a        s 
-## 0.114800 9.484372</code></pre>
+<pre><code>##          a          s 
+##  0.1006388 11.2242690</code></pre>
 <pre class="r"><code>gamma.jackknife(input)</code></pre>
 <pre><code>##      var_a      var_s 
-## 0.01457548 1.40212187</code></pre>
+## 0.02503102 2.72841070</code></pre>
 </div>
 </div>
 <div id="jackknife-for-linear-regression-coefficients" class="section level2">
@@ -220,13 +220,13 @@ data &lt;- data.frame(output,input)
 my.lm &lt;- lm(output~input, data=data)
 coefficients(my.lm)</code></pre>
 <pre><code>## (Intercept)       input 
-##   1.1501863   0.6068831</code></pre>
+##   1.1289980   0.6025378</code></pre>
 <pre class="r"><code># &quot;Official&quot; standard errors
 sqrt(diag(vcov(my.lm)))</code></pre>
 <pre><code>## (Intercept)       input 
-##  0.06919078  0.02040164</code></pre>
+##  0.07025380  0.01881499</code></pre>
 <pre class="r"><code>jackknife.lm(df=data,formula=&quot;output~input&quot;,p=2)</code></pre>
-<pre><code>## [1] 0.06943965 0.02205299</code></pre>
+<pre><code>## [1] 0.06979256 0.02070615</code></pre>
 </div>
 </div>
 <div id="refactoring-the-jackknife" class="section level2">
@@ -302,7 +302,7 @@ take the square roots</code></pre>
 <div id="it-works" class="section level3">
 <h3>It works</h3>
 <pre class="r"><code>jackknife(estimator=mean,the_data=some_normals)</code></pre>
-<pre><code>## [1] 0.508244</code></pre>
+<pre><code>## [1] 0.4925441</code></pre>
 <pre class="r"><code>all.equal(jackknife(estimator=mean,the_data=some_normals),
           mean.jackknife(some_normals))</code></pre>
 <pre><code>## [1] TRUE</code></pre>
@@ -319,7 +319,7 @@ take the square roots</code></pre>
 }
 est.coefs(data)</code></pre>
 <pre><code>## (Intercept)       input 
-##   1.1501863   0.6068831</code></pre>
+##   1.1289980   0.6025378</code></pre>
 <pre class="r"><code>all.equal(est.coefs(data), coefficients(my.lm))</code></pre>
 <pre><code>## [1] TRUE</code></pre>
 <hr />
@@ -327,7 +327,7 @@ est.coefs(data)</code></pre>
 <pre><code>## [1] 0 0</code></pre>
 <pre class="r"><code>all.equal(jackknife(estimator=est.coefs,the_data=data),
           jackknife.lm(df=data,formula=&quot;output~input&quot;,p=2))</code></pre>
-<pre><code>## [1] &quot;Mean absolute difference: 0.04574632&quot;</code></pre>
+<pre><code>## [1] &quot;Mean absolute difference: 0.04524935&quot;</code></pre>
 </div>
 </div>
 <div id="further-refactoring-of-jackknife" class="section level2">
